@@ -163,5 +163,4 @@ def fetch_all(name):
     fw.close()
 
 if __name__=='__main__':
-    fetch_all('macbook pro')
-    fetch_all('macbook air')
+    fetch_all('surface')

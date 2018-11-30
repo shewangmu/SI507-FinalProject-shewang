@@ -25,14 +25,14 @@ def recreate_db():
         CREATE TABLE `information` (
     	`Id`	INTEGER PRIMARY KEY AUTOINCREMENT,
         'product_name' TEXT,
+        'Company' TEXT,
+        `price`	TEXT,
     	`model`	TEXT,
-    	`price`	TEXT,
     	`processor_model`	TEXT,
     	`processor_speed`	TEXT,
     	`RAM`	TEXT,
     	`Screen`	TEXT,
-    	`Storage`	TEXT,
-        'Company' TEXT
+    	`Storage`	TEXT
     );
     '''
     cur.execute(statement)
@@ -52,22 +52,27 @@ def recreate_db():
     conn.commit()
     conn.close()
 
-def add_new_data(company, name):
+def add_new_data(company, product_name, company_name):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
     for i in range(len(company)):
         info = company[i]['information']
-        Id = info['id']
-        model = info['model']
         price = info['price']
-        processor_model = info['processor_model']
-        processor_speed = info['processor_speed']
-        ram = info['ram']
-        screen = info['screen']
-        storage = info['storage']
-        cur.execute("INSERT INTO information (Id, product_name, model,price,processor_model,processor_speed,RAM,Screen,Storage, Company) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                         (Id, name, model,price,processor_model,processor_speed,ram,screen,storage,'bestbuy'))
-        conn.commit()
+        Id = info['id']
+        try:
+            model = info['model']
+            processor_model = info['processor_model']
+            processor_speed = info['processor_speed']
+            ram = info['ram']
+            screen = info['screen']
+            storage = info['storage']
+            cur.execute("INSERT INTO information (Id, product_name, model,price,processor_model,processor_speed,RAM,Screen,Storage, Company) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                         (Id, product_name, model,price,processor_model,processor_speed,ram,screen,storage,company_name))
+            conn.commit()
+        except:  
+            cur.execute("INSERT INTO information (Id,product_name,price,Company) VALUES (?,?,?,?)",
+                             (Id, product_name, price, company_name))
+            conn.commit()
         
         review = company[i]['review']
         for j in range(len(review)):
@@ -81,13 +86,13 @@ def add_new_data(company, name):
             conn.commit()
     
 if __name__=='__main__':
-    name = 'macbook air'
-    #getting data from bestbuy
-    bestbuy = fetch_data.fetch_bestbuy(name,{})
-    #getting data from amazon
+    print("input the product name")
+    product_name = input()
+    print("input the company name")
+    company_name = input()
     recreate_db()
-    add_new_data(bestbuy, name)
-    bestbuy = fetch_data.fetch_bestbuy('macbook pro',{})
-    add_new_data(bestbuy, 'macBook pro')
-    
+    #getting data from bestbuy
+    bestbuy = fetch_data.fetch_bestbuy(product_name,{})
+    #getting data from amazon
+    add_new_data(bestbuy, product_name, company_name)
     

@@ -150,7 +150,84 @@ def fetch_amazon(name, dic):
     if(name in cache_dic):
         return cache_dic[name]['amazon']
     else:
-        pass
+        name = '+'.join(name.split())
+        url = 'https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Delectronics&field-keywords={}&rh=n%3A172282%2Ck'.format(name)
+        html = requests.get(url, headers={'User-Agent':'SI_CLASS'}).text
+        soup = BeautifulSoup(html, 'lxml')
+        soup = soup.find(id = 'rightResultsATF')
+        soup = soup.find(id = 'atfResults')
+        
+        new_content = []
+        for i in range(4):
+            info = {}
+            content = soup.find(id='result_{}'.format(i))
+            info_url = content.find(class_='a-row a-spacing-small').find('a')['href']
+            if info_url[0]=='/':
+                info_url = 'http://www.amazon.com'+info_url
+            info_html = requests.get(info_url, headers={'User-Agent':'SI_CLASS'}).text
+            info_soup = BeautifulSoup(info_html, 'lxml')
+            info_content = info_soup.find(id='centerCol')
+            
+            #basic information of computer
+            basic_info = info_content.find(id='title_feature_div')
+            basic_info = basic_info.find('span').text.strip()
+            info['basic'] = basic_info
+            '''
+            #screen size
+            screen = '13 inch'
+            info['screen'] = screen
+            #processor speed
+            processor_speed_num = basic_info.find('GHz')
+            if(processor_speed_num>0):
+                processor_speed = basic_info[processor_speed_num-3:processor_speed_num+3]
+                info['processor_speed'] = processor_speed
+            #processor model
+            processor_model_num = basic_info.find('Intel')
+            processor_model = ' '.join(basic_info[processor_model_num:].split()[:3])
+            info['processor_model'] = processor_model
+            #storage size
+            storage = basic_info[-1]
+            info['storage'] = storage
+            '''
+            #the price of the infomation
+            try:
+                price = info_soup.find(id='priceblock_ourprice').text
+                info['price'] = price
+                info['id'] = cache_dic['num']
+            except:
+                info['price'] = None
+                info['id'] = cache_dic['num']
+            
+            #customer review
+            rev_soup = info_soup.find(id = 'cm-cr-dp-review-list')
+            rev_soup = rev_soup.find_all(class_='a-section review')
+            rev_all = []
+            for j in range(len(rev_soup)):
+                rev = {}
+                review_content = rev_soup[j].find_all('a')
+                #rating
+                rating = int(float(review_content[1].text.split()[0]))
+                #title
+                title = review_content[2].text
+                review_content = rev_soup[j].find_all(class_='a-row')
+                #content
+                rev_content = review_content[3].find('span').text
+                #time
+                rev_time = rev_soup[j].find(class_='a-size-base a-color-secondary review-date').text
+                rev['rating'] = rating
+                rev['title'] = title
+                rev['content'] = rev_content
+                rev['ProductId'] = cache_dic['num']
+                rev['time'] = rev_time
+                rev_all.append(rev)
+            temp = {}
+            temp['information'] = info
+            temp['review'] = rev_all
+            cache_dic['num'] += 1
+            new_content.append(temp)
+        #updata cache_file
+        dic['amazon'] = new_content    
+        return new_content
     
 def fetch_all(name):
     dic = {}
@@ -163,4 +240,4 @@ def fetch_all(name):
     fw.close()
 
 if __name__=='__main__':
-    fetch_all('surface')
+    fetch_all('macbook air')

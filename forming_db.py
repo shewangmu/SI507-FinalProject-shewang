@@ -32,7 +32,8 @@ def recreate_db():
     	`processor_speed`	TEXT,
     	`RAM`	TEXT,
     	`Screen`	TEXT,
-    	`Storage`	TEXT
+    	`Storage`	TEXT,
+        'basic_info' TEXT
     );
     '''
     cur.execute(statement)
@@ -70,8 +71,12 @@ def add_new_data(company, product_name, company_name):
                          (Id, product_name, model,price,processor_model,processor_speed,ram,screen,storage,company_name))
             conn.commit()
         except:  
-            cur.execute("INSERT INTO information (Id,product_name,price,Company) VALUES (?,?,?,?)",
-                             (Id, product_name, price, company_name))
+            if(company_name=='bestbuy'):
+                cur.execute("INSERT INTO information (Id,product_name,price,Company) VALUES (?,?,?,?)",
+                                 (Id, product_name, price, company_name))
+            else:
+                cur.execute("INSERT INTO information (Id,product_name,price,Company,basic_info) VALUES (?,?,?,?,?)",
+                                 (Id, product_name, price, company_name, info['basic']))
             conn.commit()
         
         review = company[i]['review']
@@ -86,13 +91,22 @@ def add_new_data(company, product_name, company_name):
             conn.commit()
     
 if __name__=='__main__':
-    print("input the product name")
-    product_name = input()
-    print("input the company name")
-    company_name = input()
+#    print("input the product name")
+#    product_name = input()
+    product_name = 'macbook pro'
     recreate_db()
     #getting data from bestbuy
     bestbuy = fetch_data.fetch_bestbuy(product_name,{})
     #getting data from amazon
-    add_new_data(bestbuy, product_name, company_name)
+    add_new_data(bestbuy, product_name, 'bestbuy')
+    amazon = fetch_data.fetch_amazon(product_name,{})
+    add_new_data(amazon, product_name, 'amazon')
+    
+    product_name = 'macbook air'
+    bestbuy = fetch_data.fetch_bestbuy(product_name,{})
+    #getting data from amazon
+    add_new_data(bestbuy, product_name, 'bestbuy')
+    amazon = fetch_data.fetch_amazon(product_name,{})
+    add_new_data(amazon, product_name, 'amazon')
+    
     

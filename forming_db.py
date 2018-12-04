@@ -89,6 +89,9 @@ def add_new_data(company, product_name, company_name):
             cur.execute("INSERT INTO review (ProductId,Title,Time,Rating,Content) VALUES (?,?,?,?,?)",
                          (Id, title, time, rating, content))
             conn.commit()
+
+def basic_info(product):
+    pass
     
 if __name__=='__main__':
 #    print("input the product name")
@@ -108,5 +111,12 @@ if __name__=='__main__':
     add_new_data(bestbuy, product_name, 'bestbuy')
     amazon = fetch_data.fetch_amazon(product_name,{})
     add_new_data(amazon, product_name, 'amazon')
+    
+    bestbuy = fetch_data.fetch_bestbuy('surface',{})
+    add_new_data(bestbuy, 'surface', 'bestbuy')
+    
+    bestbuy = fetch_data.fetch_bestbuy('think pad',{})
+    add_new_data(bestbuy, 'think pad', 'bestbuy')
+    
     
     

@@ -197,34 +197,36 @@ def fetch_amazon(name, dic):
             except:
                 info['price'] = None
                 info['id'] = cache_dic['num']
-            
-            #customer review
-            rev_soup = info_soup.find(id = 'cm-cr-dp-review-list')
-            rev_soup = rev_soup.find_all(class_='a-section review')
-            rev_all = []
-            for j in range(len(rev_soup)):
-                rev = {}
-                review_content = rev_soup[j].find_all('a')
-                #rating
-                rating = int(float(review_content[1].text.split()[0]))
-                #title
-                title = review_content[2].text
-                review_content = rev_soup[j].find_all(class_='a-row')
-                #content
-                rev_content = review_content[3].find('span').text
-                #time
-                rev_time = rev_soup[j].find(class_='a-size-base a-color-secondary review-date').text
-                rev['rating'] = rating
-                rev['title'] = title
-                rev['content'] = rev_content
-                rev['ProductId'] = cache_dic['num']
-                rev['time'] = rev_time
-                rev_all.append(rev)
-            temp = {}
-            temp['information'] = info
-            temp['review'] = rev_all
-            cache_dic['num'] += 1
-            new_content.append(temp)
+            try:
+                #customer review
+                rev_soup = info_soup.find(id = 'cm-cr-dp-review-list')
+                rev_soup = rev_soup.find_all(class_='a-section review')
+                rev_all = []
+                for j in range(len(rev_soup)):
+                    rev = {}
+                    review_content = rev_soup[j].find_all('a')
+                    #rating
+                    rating = int(float(review_content[1].text.split()[0]))
+                    #title
+                    title = review_content[2].text
+                    review_content = rev_soup[j].find_all(class_='a-row')
+                    #content
+                    rev_content = review_content[3].find('span').text
+                    #time
+                    rev_time = rev_soup[j].find(class_='a-size-base a-color-secondary review-date').text
+                    rev['rating'] = rating
+                    rev['title'] = title
+                    rev['content'] = rev_content
+                    rev['ProductId'] = cache_dic['num']
+                    rev['time'] = rev_time
+                    rev_all.append(rev)
+                temp = {}
+                temp['information'] = info
+                temp['review'] = rev_all
+                cache_dic['num'] += 1
+                new_content.append(temp)
+            except:
+                pass
         #updata cache_file
         dic['amazon'] = new_content    
         return new_content
@@ -241,3 +243,6 @@ def fetch_all(name):
 
 if __name__=='__main__':
     fetch_all('macbook air')
+    fetch_all('macbook pro')
+    fetch_all('surface')
+    fetch_all('think pad')

@@ -36,7 +36,7 @@ class FetchData(unittest.TestCase):
         self.assertEqual(type(content[0]), dict)
     
     def test_amazon(self):
-        content = fetch_data.fetch_amazon('macbook ari', {})
+        content = fetch_data.fetch_amazon('macbook air', {})
         self.assertEqual(type(content), list)
         self.assertNotEqual(len(content), 0)
         self.assertEqual(type(content[0]), dict)
@@ -58,6 +58,7 @@ class FormingDb(unittest.TestCase):
         forming_db.recreate_db()
     
     def test_addnewData(self):
+        forming_db.recreate_db()
         product_name = 'macbook air'
         bestbuy = fetch_data.fetch_bestbuy(product_name,{})
         forming_db.add_new_data(bestbuy, 'macbook air', 'bestbuy')
@@ -68,14 +69,18 @@ class FormingDb(unittest.TestCase):
         cur = conn.cursor()
         cur.execute(statement)
         count = cur.fetchone()
-        self.assertNotEqual(count, 0)
+        self.assertNotEqual(count[0], 0)
         statement = '''
         select count(*) from review
         '''
         cur.execute(statement)
         count = cur.fetchone()
-        self.assertNotEqual(count, 0)
+        self.assertNotEqual(count[0], 0)
         conn.close()
+    
+    def test_create_all_data(self):
+        forming_db.create_all_data()
         
         
-unittest.main()       
+unittest.main() 
+forming_db.create_all_data()      

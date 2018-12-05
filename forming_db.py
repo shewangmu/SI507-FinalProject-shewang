@@ -67,15 +67,15 @@ def add_new_data(company, product_name, company_name):
             ram = info['ram']
             screen = info['screen']
             storage = info['storage']
-            cur.execute("INSERT INTO information (Id, product_name, model,price,processor_model,processor_speed,RAM,Screen,Storage, Company) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                         (Id, product_name, model,price,processor_model,processor_speed,ram,screen,storage,company_name))
+            cur.execute("INSERT INTO information (Id, product_name, model,price,processor_model,processor_speed,RAM,Screen,Storage, Company,basic_info) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                         (Id, product_name, model,price,processor_model,processor_speed,ram,screen,storage,company_name,info['basic']))
             conn.commit()
         except:  
-            if(company_name=='bestbuy'):
-                cur.execute("INSERT INTO information (Id,product_name,price,Company) VALUES (?,?,?,?)",
-                                 (Id, product_name, price, company_name))
-            else:
-                cur.execute("INSERT INTO information (Id,product_name,price,Company,basic_info) VALUES (?,?,?,?,?)",
+#            if(company_name=='bestbuy'):
+#                cur.execute("INSERT INTO information (Id,product_name,price,Company) VALUES (?,?,?,?)",
+#                                 (Id, product_name, price, company_name))
+#            else:
+            cur.execute("INSERT INTO information (Id,product_name,price,Company,basic_info) VALUES (?,?,?,?,?)",
                                  (Id, product_name, price, company_name, info['basic']))
             conn.commit()
         
@@ -90,14 +90,10 @@ def add_new_data(company, product_name, company_name):
                          (Id, title, time, rating, content))
             conn.commit()
 
-def basic_info(product):
-    pass
     
-if __name__=='__main__':
-#    print("input the product name")
-#    product_name = input()
-    product_name = 'macbook pro'
+def create_all_data():
     recreate_db()
+    product_name = 'macbook pro'
     #getting data from bestbuy
     bestbuy = fetch_data.fetch_bestbuy(product_name,{})
     #getting data from amazon
@@ -114,9 +110,14 @@ if __name__=='__main__':
     
     bestbuy = fetch_data.fetch_bestbuy('surface',{})
     add_new_data(bestbuy, 'surface', 'bestbuy')
+    amazon = fetch_data.fetch_amazon('surface',{})
+    add_new_data(amazon,'surface','amazon')
     
-    bestbuy = fetch_data.fetch_bestbuy('think pad',{})
-    add_new_data(bestbuy, 'think pad', 'bestbuy')
+    bestbuy = fetch_data.fetch_bestbuy('thinkpad',{})
+    add_new_data(bestbuy, 'thinkpad', 'bestbuy')
+    amazon = fetch_data.fetch_amazon('thinkpad',{})
+    add_new_data(amazon,'thinkpad','amazon')
+    
     
     
     

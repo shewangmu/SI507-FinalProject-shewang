@@ -1,9 +1,24 @@
+
+<link rel="stylesheet" href="/static/style.css">
+
 <h1 align="center">{{product}}</h1>
+
 <h2>Basic Information</h2>
-{{basic}}
+<table border=1>
+    <tr> 
+        <th>Company </th>
+        <th>Price </th>
+        <th>Average Rating</th>
+        <th>Basic Information </th>
+    </tr>
+    {% for i in information %}
+        <tr>
+            <td> {{i[0]}} </td>
+            <td> {{i[1]}} </td>
+            <td> {{i[2]}} </td>
+            <td> {{i[3]}} </td>
+        </tr>
+    {% endfor %}
+</table>
+
 <h2>Presentation</h2>
-<a href='rate_his'> The histogram of rating</a>
-<br></br>
-<a href='rate_time'> The change of rating through time</a>
-<br></br>
-<a href='rate_title'> The tile of reviews of different ratings</a>

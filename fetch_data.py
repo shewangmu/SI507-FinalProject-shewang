@@ -24,6 +24,7 @@ def get_information(i, res, name):
     info = {}
     information = res[i].find(class_='sku-header')
     info_url = information.find('a')['href']
+    info['basic'] = information.find('a').text
     info_html = requests.get(info_url, headers={'User-Agent':'SI_CLASS'}).text
     info_soup = BeautifulSoup(info_html, 'html.parser')
     
@@ -142,8 +143,6 @@ def fetch_bestbuy(name, dic):
             except:
                 j+=1
         
-        #update cache_file
-        dic['best_buy'] = new_content
         return new_content
  
 def fetch_amazon(name, dic):
@@ -158,7 +157,7 @@ def fetch_amazon(name, dic):
         soup = soup.find(id = 'atfResults')
         
         new_content = []
-        for i in range(4):
+        for i in range(2):
             info = {}
             content = soup.find(id='result_{}'.format(i))
             info_url = content.find(class_='a-row a-spacing-small').find('a')['href']
@@ -226,15 +225,13 @@ def fetch_amazon(name, dic):
                 cache_dic['num'] += 1
                 new_content.append(temp)
             except:
-                pass
-        #updata cache_file
-        dic['amazon'] = new_content    
+                pass 
         return new_content
     
 def fetch_all(name):
     dic = {}
-    fetch_bestbuy(name, dic)
-    fetch_amazon(name, dic)
+    dic['best_buy'] = fetch_bestbuy(name, dic)
+    dic['amazon'] = fetch_amazon(name, dic)
     cache_dic[name] = dic
     dumped_json_cache = json.dumps(cache_dic)
     fw = open('cache.json', 'w')
@@ -242,7 +239,9 @@ def fetch_all(name):
     fw.close()
 
 if __name__=='__main__':
-    fetch_all('macbook air')
-    fetch_all('macbook pro')
-    fetch_all('surface')
-    fetch_all('think pad')
+    pass
+#    fetch_all('macbook pro')
+#    fetch_all('macbook pro')
+#    fetch_all('surface')
+#    fetch_all('thinkpad')
+#    fetch_amazon('macbook air',{})

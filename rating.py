@@ -7,22 +7,26 @@ Created on Mon Dec  3 19:19:55 2018
 """
 
 import secret
+import forming_db
 import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
 
 import sqlite3
+forming_db.create_all_data()
 conn = sqlite3.connect('computer.db')
 cur = conn.cursor()
 
 #rating histogram
-def rating_histogram():
+def rating_histogram(product_name):
     rating_num = []
     for i in range(5):
         statement = '''
         select count(*) from review
+        inner join information on information.Id=review.ProductId
         where Rating={}
-        '''.format(i+1)
+        and information.product_name='{}'
+        '''.format(i+1, product_name)
         cur.execute(statement)
         rating_num.append(cur.fetchone()[0])
     
@@ -35,19 +39,20 @@ def rating_histogram():
                 y=rating_num
         )]
     layout1 = go.Layout(
-            title = "histogram of rating"
+            title = "{} histogram of rating".format(product_name)
             )
     fig = go.Figure(data=data1, layout=layout1)
-    py.iplot(fig, filename='rating histgram',auto_open=True)
+    py.iplot(fig, filename='rating histgram {}'.format(product_name),auto_open=True)
 
 #rating through time
-def rating_time():
+def rating_time(product_name):
     statement='''
     select  Time,avg(Rating) from review
     inner join information on information.Id=review.ProductId
     where information.Company='bestbuy'
+    and information.product_name='{}'
     group by review.Time
-    '''
+    '''.format(product_name)
     cur.execute(statement)
     res = cur.fetchall()
     year = []
@@ -83,12 +88,12 @@ def rating_time():
             color = ('rgb(205, 12, 24)'),
             width = 4,)
     )]
-    layout2 = dict(title = 'rating through time',
+    layout2 = dict(title = 'rating through time {}'.format(product_name),
                   xaxis = dict(title = 'time'),
                   yaxis = dict(title = 'average rating'),
                   )
     fig = go.Figure(data=data2, layout=layout2)
-    py.iplot(fig, filenam='rating through time', auto_open=True)
+    py.iplot(fig, filenam='rating time {}'.format(product_name), auto_open=True)
 
 def rating_title(rating,product_name):
     statement = '''
@@ -102,5 +107,5 @@ def rating_title(rating,product_name):
     res = cur.fetchall()
     return res
 
-conn.close()
+
         

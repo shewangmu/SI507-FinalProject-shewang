@@ -157,7 +157,7 @@ def fetch_amazon(name, dic):
         soup = soup.find(id = 'atfResults')
         
         new_content = []
-        for i in range(2):
+        for i in range(4):
             info = {}
             content = soup.find(id='result_{}'.format(i))
             info_url = content.find(class_='a-row a-spacing-small').find('a')['href']

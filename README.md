@@ -22,13 +22,20 @@ Main contents of the project:
 
 
 Other files:
-1. Before you run the project:
+1. Getting api key from plotly and add to secrets.py:
+
+   PLOTLY_USERNAME= ' '           PLOTLY_API_KEY = ' '
+2. Before you run the project:
+
    a). mkdir a new file_folder, cd into the folder and create a virtual enviroment by command "virtualenv project".
    b). source into the enviroment by command "source project/bin/activate"
    c). install the pakage you need in this project by command "pip install -r requirements.txt"
-2. templates
+3. templates
+
    template folder includes the html templates you would use.
-3. static
+4. static
+
    After you getting the image from rating.py, add image to static folder
-4. model.py
+5. model.py
+
    Includes the model you will use when calling flask. Add name if fetch new kind of computer.
